@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Prr</title>
+	<style>
+		@keyframes rotate {
+			0% { transform: rotate(-13deg )}
+			50% { transform: rotate(13deg )}
+			100% { transform: rotate(-13deg )}
+		}
+		@keyframes sc {
+			0% { transform: scale(1.25,1.25) }
+			50% { transform: scale(1,1) }
+			100% { transform: scale(1.25,1.25) }
+		}
+
+		@keyframes dots {
+			from { width: 0px; }
+			to { width: 18px; }
+		}
+
+		body {
+			overflow: hidden;
+		}
+
+		.img-wrap {
+			font-size: 24px;
+			display: block;
+			position: absolute;
+		    top: 50%;
+		    left: 50%;
+		    margin: -125px 0 0 -125px;
+		}
+
+		.img-content{
+			margin-left: 8px;
+			animation: sc 1s linear infinite;
+		}
+
+		.er68 {
+			animation: rotate 3s linear infinite;
+		}
+		
+		.prr {
+			display: block;
+			position: absolute;
+			z-index: -2
+		}
+
+		.dots {
+			display: inline-block;
+			width: 5px;
+			overflow: hidden;
+			vertical-align: bottom;
+			animation: dots 1s linear infinite;
+			transition: 1;
+		}
+
+		.main {
+			max-width: 100%;
+			max-height: 100%;
+			overflow: hidden;
+		}
+
+		.wrap {
+			min-width: 10%;
+		}
+
+		.load-text{
+			color: #9c5726; 
+			margin-left: 25px;
+			background-color: rgba(355,355,355,.8);
+			padding: 5px;
+			border: 2px solid black;
+			z-index: 140;
+		}
+
+		.item-wrap {
+			margin: 5px;
+			z-index: 150;
+		}
+
+		.speed-item {
+			display: inline-block;
+			text-align: center;
+			border: 1px solid black;
+			border-radius: 50%;
+			padding-top: 6px;
+			width: 30px;
+			height: 24px;
+			margin-right: 10px;
+			cursor: pointer;
+		}
+		.items :last-child{
+			margin-right: 0px;
+		}
+
+		.speed-item:hover {
+			background-color: blue;
+			color: white;
+			transition: .3s;
+		}
+
+		.item-content {
+			display: inline-block;
+			font-size: 15px;
+    		background-color: rgba(355,355,355,.8);
+			width: auto;
+			padding: 10px;
+    		border: 2px solid hsl(40, 94%, 15%);
+		}
+	</style>
+</head>
+<body>
+	<div class="item-wrap">
+		<div class="item-content">Счётчик Эрбия: <span id="count">0</span></div>
+	</div>
+	<div class="item-wrap">
+		<div class="item-content">Скорость: <span id="speed">1000</span>ms</div>
+	</div>
+	<div class="item-wrap">
+		<div class="item-content items">
+			<span class="speed-item" title="Увеличить скорость" id="fast">+</span>
+			<span class="speed-item" title="Пауза" id="pause">></span>
+			<span class="speed-item" title="Уменьшить скорость" id="slow">-</span>
+		</div>
+	</div>
+	<div calss="wpar">
+		<div class="img-wrap">
+			<div class="img-content"><img class="er68" src="../_image/erMin.png"></div>
+			<p class="load-text">Loading<span class="dots">...</span></p>
+		</div>
+	</div>
+
+	<script>
+
+	var t = 1, l = 1, total = 1,
+		count = document.getElementById('count'),
+		slow = document.getElementById('slow'),
+		fast = document.getElementById('fast'),
+		pause = document.getElementById('pause'),
+		speed = document.getElementById('speed'),
+
+		proces = false,
+		timerId;
+
+		function continueInterval(ms) {
+
+			timerId = setInterval( function() {
+				let h = document.documentElement.clientHeight,
+					w = document.documentElement.clientWidth;
+
+				var img = document.createElement('img');
+
+				img.setAttribute('src', '../_image/erMin.png');			
+				img.classList.add('prr');
+
+				img.style.top = h  * Math.random() + 'px';
+				img.style.left = w   * Math.random() + 'px';
+				img.style.width = (100*Math.random()) + 'px';
+				img.style.transform = `rotate(${360*Math.random()}deg)`;
+
+				document.body.appendChild(img);
+				count.innerHTML = total;
+				speed.innerHTML = ms;
+				total++
+
+				if(total>150){count.style.color = 'f9045d'};
+				if((w*h)/total < 1500){
+					clearInterval(timerId);
+					count.style.color = 'red';
+					count.style.textDecoration = 'underline';
+					count.style.fontWeight = 'bold';
+					count.innerHTML = total + ' - слишком много эрпули на экране!'};
+				
+			}, ms);
+		};
+
+		pause.addEventListener('click', function(){
+			if(proces){
+				clearInterval(timerId);
+				this.innerHTML = '>';
+				this.setAttribute('title', 'Продолжить');
+				proces = false;
+			} else {
+				this.innerHTML = '||';
+				this.setAttribute('title', 'Пауза');
+				proces = true;
+				continueInterval(speed.innerHTML);
+			};
+		})
+
+		fast.onclick = function(){
+			clearInterval(timerId);
+			proces = true;
+
+			speed.innerHTML==100?speed.innerHTML = 100:speed.innerHTML = +speed.innerHTML - 100;
+			continueInterval(+speed.innerHTML)
+		}
+		slow.onclick = function(){
+			clearInterval(timerId);
+			proces = true;
+			speed.innerHTML = +speed.innerHTML + 100;
+			continueInterval(+speed.innerHTML);
+		}
+
+
+	</script>
+</body>
+</html>
